@@ -4,19 +4,22 @@ Created on Wed Oct 21 22:25:34 2020
 
 @author: nakag
 """
-
+#
 import numpy as np
 import matplotlib 
 import matplotlib.pyplot as plt 
 import scipy.ndimage.filters as filters
 from numba import jit
 
+#Adición de ruido a las imágenes originales
+'''----------------------Ruido Gaussiano-------------------'''
 def add_gnoise(n_type,image,sigma):
     if n_type=='gauss':
         gaussian_noise=np.random.normal(loc=0.0, scale=sigma,size=np.shape(image))
         noisy = image + gaussian_noise
         return noisy
 
+'''----------------------Ruido Impulsivo-------------------'''
 def salpimienta(n_type,image,intensity):
     if n_type=='s&p' :
         cant = intensity
@@ -32,17 +35,10 @@ def salpimienta(n_type,image,intensity):
         ruido_output[pos]=0
         return ruido_output
     
-#NON LOCAL MEANS ALGORITHM
-# Non Local Mean filter
-
-
-
-#padding 
-
 
 #plt.imshow(img)
-def mean_filter(img):
-    size_filter = 3
+def mean_filter(img,size_filter):
+
     # the filter is divided by size_filter^2 for normalization
     mean_filter = np.ones((size_filter,size_filter))/np.power(size_filter,2)
     # performing convolution
@@ -60,68 +56,62 @@ def gaussian_filter(img,sigma):
     return img_gaussianfiltered
 
 
-    
+'''----------------------Filtro NLM-------------------'''    
 #NLM: filtrar la imagen mediante el promedio ponderado de 
 #los diferentes píxeles de la imagen en función de su similitud
-#con el píxel original.
 
-def nlm(img_ori, h_square):
-#padding 
+def nlm(img_ori, h_square): 
 
-    img_pad = np.pad(img_ori,1, mode='reflect') #NO SE SI EL PADDING ESTA BIEN
+    img_pad = np.pad(img_ori,1, mode='reflect') #Realizamos el padding de la imagen    
+    
+    matriz_pesos = np.zeros(shape=(img_ori.shape[0],img_ori.shape[1])) #almacenamos los pesos en una matriz
+    
+    matriz_imagen = np.zeros(shape=(img_ori.shape[0],img_ori.shape[1])) #Creamos otra matriz de ceros en la que indexaremos la imagen final
 
-    
-    
-    row,col = img_pad.shape
-    
-    
-    matriz_pesos = np.zeros(shape=(img_ori.shape[0],img_ori.shape[1])) #aqui almacenamos los pesos
-    
-    matriz_imagen = np.zeros(shape=(img_ori.shape[0],img_ori.shape[1]))
-
-    for i in range(1,img_pad.shape[0]-1):
-        #print(i)
+    for i in range(1,img_pad.shape[0]-1):#Vamos a crear dos parches 3x3 que vamos a ir comparando 
         for j in range(1,img_pad.shape[1]-1):
-            #print(j)
             
-            #parche 3x
+            #parche 3x3 de referencia (el que se quiere comparar con el resto de parches de la imagen, estará centrado en el pixel a filtrar)
             
             matriz1 = np.array([[img_pad[i-1,j-1],img_pad[i-1,j],img_pad[i-1,j+1]], 
                                 [img_pad[i,j-1],img_pad[i,j],img_pad[i,j+1]], 
                                 [img_pad[i+1,j-1],img_pad[i+1,j],img_pad[i+1,j+1]]])
             
-            #print(matriz1)
             for x in range(1,img_pad.shape[0]-1):
                 for y in range(1,img_pad.shape[1]-1):
+                    
+                    #parche 3x3 que va recorriendo la imagen para compararse con el primero
                     
                         matriz2 = np.array([[img_pad[x-1,y-1],img_pad[x-1,y],img_pad[x-1,y+1]], 
                                 [img_pad[x,y-1],img_pad[x,j],img_pad[x,y+1]], 
                                 [img_pad[x+1,y-1],img_pad[x+1,y],img_pad[x+1,y+1]]])
                     
+                    #Cálculo de la distancia euclídea
+                    
                         distance = np.sqrt((matriz1-matriz2)**2)
                         distance = np.sum(distance)
+                    #Ponderación de cada píxel en función de su similitud respecto al pixel a filtrar 
+                        weights_ij = (np.exp(-distance/h_square)) #Nótese que el parámetro h_square va asociado al grado de filtrado
                     
-                        weights_ij = (np.exp(-distance/h_square))
-                    
-                        matriz_pesos[x-1,y-1] = weights_ij 
+                        matriz_pesos[x-1,y-1] = weights_ij #Introducimos cada uno de los peso a la matriz
                     
             
-            
+            #Ponderación de máscara obtenida (Aplicamos en este paso la cte de normalización Z(i))
             matriz_ponderada = matriz_pesos/np.sum(matriz_pesos)
             
-            
+            #Finalmente se aplica la máscara a la imagen original
             matriz_imagen[i-1,j-1] = np.sum(np.multiply(img_ori,matriz_ponderada))
        
     return matriz_imagen
+
+'''----------------------Filtro NLM modificación 1-------------------'''   
+#Función de NLM ponderando el parche original
 
 def nlm_samepatch(img_ori, h_square):
-#padding 
-
-    img_pad = np.pad(img_ori,1, mode='reflect') 
-
-    row,col = img_pad.shape
     
-    
+    #padding 
+    img_pad = np.pad(img_ori,1, mode='reflect') #Realizamos el padding de la imagen original en el modo Reflect
+
     matriz_pesos = np.zeros(shape=(img_ori.shape[0],img_ori.shape[1])) #aqui almacenamos los pesos
     
     matriz_imagen = np.zeros(shape=(img_ori.shape[0],img_ori.shape[1]))
@@ -129,7 +119,6 @@ def nlm_samepatch(img_ori, h_square):
     for i in range(1,img_pad.shape[0]-1):
         #print(i)
         for j in range(1,img_pad.shape[1]-1):
-            #print(j)
             
             #parche 3x
             
@@ -137,7 +126,6 @@ def nlm_samepatch(img_ori, h_square):
                                 [img_pad[i,j-1],img_pad[i,j],img_pad[i,j+1]], 
                                 [img_pad[i+1,j-1],img_pad[i+1,j],img_pad[i+1,j+1]]])
             
-            #print(matriz1)
             for x in range(1,img_pad.shape[0]-1):
                 for y in range(1,img_pad.shape[1]-1):
                     
@@ -152,10 +140,9 @@ def nlm_samepatch(img_ori, h_square):
 
                         matriz_pesos[x-1,y-1] = weights_ij 
                     
-            matriz_pesos[i-1,j-1] = 0 #hago que nuestro pix sea el de menor valor, para evitas 
+            matriz_pesos[i-1,j-1] = 0 #hago que nuestro pixel sea el de menor valor, para evitar que asuma que el máximo es la propia comparación consigo mismo
                         
-            matriz_pesos[i-1,j-1] = np.max(matriz_pesos)
-                    
+            matriz_pesos[i-1,j-1] = np.max(matriz_pesos) #obtenemos el valor máximo de similitud que se haya encontrado en el resto de la imagen
             
             
             matriz_ponderada = matriz_pesos/np.sum(matriz_pesos)
@@ -165,34 +152,29 @@ def nlm_samepatch(img_ori, h_square):
        
     return matriz_imagen
 
+
+'''----------------------Filtro NLM-cpp modificación 2-------------------'''  
+
 def nlm_cpp(img_ori, h_square, D_0, alpha):
-#padding 
 
     img_pad = np.pad(img_ori,1, mode='reflect') 
-
-    
-    
-    row,col = img_pad.shape
-    
     
     matriz_pesos = np.zeros(shape=(img_ori.shape[0],img_ori.shape[1])) #aqui almacenamos los pesos
     
     matriz_imagen = np.zeros(shape=(img_ori.shape[0],img_ori.shape[1]))
     
-    matriz_nu = np.zeros(shape=(img_ori.shape[0],img_ori.shape[1]))
+    matriz_nu = np.zeros(shape=(img_ori.shape[0],img_ori.shape[1])) #esta será la matriz que multiplicaremos por los pesos normalizados
 
     for i in range(1,img_pad.shape[0]-1):
-        #print(i)
         for j in range(1,img_pad.shape[1]-1):
-            #print(j)
             
-            #parche 3x
+            #parche 3x3
             
             matriz1 = np.array([[img_pad[i-1,j-1],img_pad[i-1,j],img_pad[i-1,j+1]], 
                                 [img_pad[i,j-1],img_pad[i,j],img_pad[i,j+1]], 
                                 [img_pad[i+1,j-1],img_pad[i+1,j],img_pad[i+1,j+1]]])
             
-            #print(matriz1)
+
             for x in range(1,img_pad.shape[0]-1):
                 for y in range(1,img_pad.shape[1]-1):
                     
@@ -205,25 +187,25 @@ def nlm_cpp(img_ori, h_square, D_0, alpha):
                         
                         weights_ij = (np.exp(-distance/h_square))
                         
-                        
-                       # D_0 = 10
-                        #alpha = 6
                         matriz_nu[x-1,y-1] = 1/(1+(np.abs(img_pad[i,j]-img_pad[x,y])/D_0)**(2*alpha))
-                        #weights_ij_cpp = nu_ij*weights_ij
                 
                         matriz_pesos[x-1,y-1] = weights_ij
                        
                     
             
             
-            matriz_ponderada1 = matriz_pesos/np.sum(matriz_pesos)
-            matriz_nu_pond = np.multiply(matriz_nu,matriz_ponderada1)
-            matriz_ponderada_nu2 = matriz_nu_pond/np.sum(matriz_nu_pond)
+            matriz_ponderada1 = matriz_pesos/np.sum(matriz_pesos)#normalización de los pesos
+            
+            matriz_nu_pond = np.sum(np.multiply(matriz_nu,matriz_ponderada1))#ponderamos los pesos por nu, para que dependan de la similitud entre píxeles centrales
+            
+            matriz_ponderada_nu2 = matriz_nu_pond/np.sum(matriz_nu_pond)#normalización de los pesos tras ponderar por nu
+           
             matriz_imagen[i-1,j-1] = np.sum(np.multiply(img_ori,matriz_ponderada_nu2))
        
     return matriz_imagen
  
 
+'''----------------------Filtro Anisotrópico-------------------'''  
 
 def aniso_filter(img, iteraciones, grad):            
 
