@@ -207,7 +207,7 @@ def nlm_cpp(img_ori, h_square, D_0, alpha):
 
 '''----------------------Filtro Anisotrópico-------------------'''  
 
-def aniso_filter(img, iteraciones, grad):            
+def aniso_filter(img, iteraciones, threshold):            
 
     #aplicamos sobel a una imagen con ruido
     img_sobel_g=filters.sobel(img)
@@ -236,7 +236,7 @@ def aniso_filter(img, iteraciones, grad):
                 
                 gradiente= np.sum(parche_sobel)
                     
-                if gradiente<grad:
+                if gradiente<threshold:
                     parche_noisy = np.array([[img_noisy_pad[i-1,j-1],img_noisy_pad[i-1,j],img_noisy_pad[i-1,j+1]], 
                                        [img_noisy_pad[i,j-1],img_noisy_pad[i,j],img_noisy_pad[i,j+1]], 
                                         [img_noisy_pad[i+1,j-1],img_noisy_pad[i+1,j],img_noisy_pad[i+1,j+1]]])
