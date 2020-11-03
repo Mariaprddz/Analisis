@@ -9,34 +9,62 @@ import numpy as np
 import matplotlib 
 import matplotlib.pyplot as plt 
 import scipy.ndimage.filters as filters
-from numba import jit
+from numba import njit, prange
 
 #Adición de ruido a las imágenes originales
 '''----------------------Ruido Gaussiano-------------------'''
-def add_gnoise(n_type,image,sigma):
-    if n_type=='gauss':
-        gaussian_noise=np.random.normal(loc=0.0, scale=sigma,size=np.shape(image))
-        noisy = image + gaussian_noise
-        return noisy
+def add_gnoise(image,sigma):
+    '''
+
+    Parameters
+    ----------
+    image : Array of float32
+        Imagen a la que queremos añadir ruido.
+    sigma : float
+        Parámetro que modula la cantidad de ruido gausiano que añadimos (desviación típica de la distribución normal).
+
+    Returns
+    -------
+    noisy : Array of float64
+        Imagen con ruido gaussiano.
+
+    '''
+
+    gaussian_noise=np.random.normal(loc=0.0, scale=sigma,size=np.shape(image))#Creación del ruido mediante una distribución normal a la que entra sigma como parámetro.
+    noisy = image + gaussian_noise#Adición de ruido gaussiano a la imagen original
+    return noisy
 
 '''----------------------Ruido Impulsivo-------------------'''
-def salpimienta(n_type,image,intensity):
-    if n_type=='s&p' :
-        cant = intensity
-        ruido_output= np.copy(image)
+def salpimienta(image,intensity):
+    '''
 
-        #ruido de sal
-        num_salt = np.ceil(cant * image.size * 0.5)
-        pos = [np.random.randint(0, i - 1, int(num_salt)) for i in image.shape]
-        ruido_output[pos]=1
-        #ruido pimienta
-        num_pepper= np.ceil(cant * image.size * 0.5)
-        pos = [np.random.randint(0, i - 1, int(num_pepper)) for i in image.shape]
-        ruido_output[pos]=0
-        return ruido_output
+    Parameters
+    ----------
+    image : Array of float32
+        Imagen a la que queremos añadir ruido.
+    intensity : float
+        Parámetro que modula la cantidad de ruido impulsivo que añadimos.
+
+    Returns
+    -------
+    ruido_output: Array of float64
+        Imagen con ruido gaussiano.
+
+    '''
+    cant = intensity
+    ruido_output= np.copy(image)
+    #ruido de sal
+    num_salt = np.ceil(cant * image.size * 0.5)
+    pos = [np.random.randint(0, i - 1, int(num_salt)) for i in image.shape]
+    ruido_output[pos]=1
+    #ruido pimienta
+    num_pepper= np.ceil(cant * image.size * 0.5)
+    pos = [np.random.randint(0, i - 1, int(num_pepper)) for i in image.shape]
+    ruido_output[pos]=0
+    return ruido_output
     
 
-#plt.imshow(img)
+
 def mean_filter(img,size_filter):
 
     # the filter is divided by size_filter^2 for normalization
@@ -59,8 +87,23 @@ def gaussian_filter(img,sigma):
 '''----------------------Filtro NLM-------------------'''    
 #NLM: filtrar la imagen mediante el promedio ponderado de 
 #los diferentes píxeles de la imagen en función de su similitud
-
+#@njit(parallel=True)
 def nlm(img_ori, h_square): 
+    '''
+
+    Parameters
+    ----------
+    img_ori : Array of float64
+        Imagen ruidosa a filtrar.
+    h_square : float
+        Parámetro de similitud asociado al grado de filtrado.
+
+    Returns
+    -------
+    matriz_imagen : Array of float64
+        Imagen filtrada mediante NLM.
+
+    '''
 
     img_pad = np.pad(img_ori,1, mode='reflect') #Realizamos el padding de la imagen    
     
@@ -106,7 +149,7 @@ def nlm(img_ori, h_square):
 
 '''----------------------Filtro NLM modificación 1-------------------'''   
 #Función de NLM ponderando el parche original
-
+#@njit(parallel=True)
 def nlm_samepatch(img_ori, h_square):
     
     #padding 
@@ -117,7 +160,7 @@ def nlm_samepatch(img_ori, h_square):
     matriz_imagen = np.zeros(shape=(img_ori.shape[0],img_ori.shape[1]))
 
     for i in range(1,img_pad.shape[0]-1):
-        #print(i)
+
         for j in range(1,img_pad.shape[1]-1):
             
             #parche 3x
@@ -126,8 +169,8 @@ def nlm_samepatch(img_ori, h_square):
                                 [img_pad[i,j-1],img_pad[i,j],img_pad[i,j+1]], 
                                 [img_pad[i+1,j-1],img_pad[i+1,j],img_pad[i+1,j+1]]])
             
-            for x in range(1,img_pad.shape[0]-1):
-                for y in range(1,img_pad.shape[1]-1):
+            for x in prange(1,img_pad.shape[0]-1):
+                for y in prange(1,img_pad.shape[1]-1):
                     
                         matriz2 = np.array([[img_pad[x-1,y-1],img_pad[x-1,y],img_pad[x-1,y+1]], 
                                 [img_pad[x,y-1],img_pad[x,y],img_pad[x,y+1]], 
@@ -154,7 +197,7 @@ def nlm_samepatch(img_ori, h_square):
 
 
 '''----------------------Filtro NLM-cpp modificación 2-------------------'''  
-
+#@njit(parallel=True)
 def nlm_cpp(img_ori, h_square, D_0, alpha):
 
     img_pad = np.pad(img_ori,1, mode='reflect') 
@@ -190,9 +233,7 @@ def nlm_cpp(img_ori, h_square, D_0, alpha):
                         matriz_nu[x-1,y-1] = 1/(1+(np.abs(img_pad[i,j]-img_pad[x,y])/D_0)**(2*alpha))
                 
                         matriz_pesos[x-1,y-1] = weights_ij
-                       
-                    
-            
+                           
             
             matriz_ponderada1 = matriz_pesos/np.sum(matriz_pesos)#normalización de los pesos
             
@@ -223,7 +264,7 @@ def aniso_filter(img, iteraciones, threshold):
     img_noisy_pad=np.pad(img, 1, mode='reflect') #padding de la original
     while cont<iteraciones:
         cont=cont+1
-        
+
         for i in range(1,img_sobel_g_pad.shape[0]-1):
             for j in range(1,img_sobel_g_pad.shape[1]-1):
     
@@ -244,8 +285,9 @@ def aniso_filter(img, iteraciones, threshold):
                 else:
                     values[i-1, j-1]=img[i-1, j-1]
 
-    return values
 
+
+    return values
 
 
 
