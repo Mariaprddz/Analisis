@@ -196,7 +196,7 @@ def nlm_cpp(img_ori, h_square, D_0, alpha):
             
             matriz_ponderada1 = matriz_pesos/np.sum(matriz_pesos)#normalización de los pesos
             
-            matriz_nu_pond = np.sum(np.multiply(matriz_nu,matriz_ponderada1))#ponderamos los pesos por nu, para que dependan de la similitud entre píxeles centrales
+            matriz_nu_pond = np.multiply(matriz_nu,matriz_ponderada1)#ponderamos los pesos por nu, para que dependan de la similitud entre píxeles centrales
             
             matriz_ponderada_nu2 = matriz_nu_pond/np.sum(matriz_nu_pond)#normalización de los pesos tras ponderar por nu
            
@@ -219,7 +219,6 @@ def aniso_filter(img, iteraciones, threshold):
     values=np.zeros(shape=(img_sobel_g.shape[0],img_sobel_g.shape[1]))
     #aplicamos algoritmo anisotropico
     cont=0
-    row,col = img_sobel_g_pad.shape
     
     img_noisy_pad=np.pad(img, 1, mode='reflect') #padding de la original
     while cont<iteraciones:
