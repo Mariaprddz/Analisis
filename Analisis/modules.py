@@ -279,19 +279,33 @@ def nlm_cpp(img_ori, img_pad, h_square, D_0, alpha):
 '''----------------------Filtro Anisotrópico-------------------'''  
 
 def aniso_filter(img, iteraciones, threshold):            
-
-    #aplicamos sobel a una imagen con ruido
-    img_sobel_g=filters.sobel(img)
-    
-    #realizamos el padding con img sobel
-    img_sobel_g_pad=np.pad(img_sobel_g, 1, mode='reflect')
-    
-    #matriz para almacenar 
-    values=np.zeros(shape=(img_sobel_g.shape[0],img_sobel_g.shape[1]))
-    #aplicamos algoritmo anisotropico
     cont=0
-    
-    img_noisy_pad=np.pad(img, 1, mode='reflect') #padding de la original
+    if cont==0:
+        #aplicamos sobel a una imagen con ruido
+        img_sobel_g=filters.sobel(img)
+        
+        #realizamos el padding con img sobel
+        img_sobel_g_pad=np.pad(img_sobel_g, 1, mode='reflect')
+        
+        #matriz para almacenar 
+        values=np.zeros(shape=(img_sobel_g.shape[0],img_sobel_g.shape[1]))
+        #aplicamos algoritmo anisotropico
+        cont=0
+        
+        img_noisy_pad=np.pad(img, 1, mode='reflect') #padding de la original
+    else:
+                #aplicamos sobel a una imagen con ruido
+        img_sobel_g=filters.sobel(values)
+        
+        #realizamos el padding con img sobel
+        img_sobel_g_pad=np.pad(img_sobel_g, 1, mode='reflect')
+                
+        img_noisy_pad=np.pad(values, 1, mode='reflect') #padding de la original
+        #matriz para almacenar 
+        values=np.zeros(shape=(img_sobel_g.shape[0],img_sobel_g.shape[1]))
+
+        
+        img_noisy_pad=np.pad(img, 1, mode='reflect') #padding de la original
     while cont<iteraciones:
         
         '''
