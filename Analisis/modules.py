@@ -271,6 +271,24 @@ def nlm_cpp(img_ori, img_pad, h_square, D_0, alpha):
 
 def aniso_filter(img, iteraciones, threshold):   
     
+        '''
+    Parameters
+    ----------
+    img : Array of float64
+        Imagen ruidosa a filtrar.
+        
+    iteraciones : int
+        Número de veces en las que se va a aplicar el filtrado
+    threshold: float
+        Umbral de gradiente que determina si se aplica o no el suavizado. 
+        Está entre 0 y 1 porque la imagen está normalizada
+        
+    Returns
+    -------
+    values : Array of float64
+        Imagen resultante del filtrado anisotrópico.
+    '''
+    
     #creamos un contador para contabilizar cuando hemos terminado la primera iteración
     cont=0
     
@@ -349,7 +367,7 @@ def aniso_filter(img, iteraciones, threshold):
                 # ahora creamos un if para diferenciar las zonas por las que el algoritmo va a poder suavizar (zonas homogéneas)
                 # y las zonas que no debe suavizar (bordes)
                 
-                if gradiente<threshold:
+                if gradiente<threshold:  #el threshold es un float entre 0 y 1 porque la imagen está normalizada
                     
                     # si el gradiente es menor que el umbral definido entonces estamos ante una zona homogénea
                     # como es una zona homogénea y por tanto vamos a poder 'suavizar' la zona
