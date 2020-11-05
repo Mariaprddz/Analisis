@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Oct 21 22:25:34 2020
+
 @author: nakag
 """
 #
@@ -14,16 +15,19 @@ from numba import njit, prange
 '''----------------------Ruido Gaussiano-------------------'''
 def add_gnoise(image,sigma):
     '''
+
     Parameters
     ----------
     image : Array of float32
         Imagen a la que queremos añadir ruido.
     sigma : float
         Parámetro que modula la cantidad de ruido gausiano que añadimos (desviación típica de la distribución normal).
+
     Returns
     -------
     noisy : Array of float64
         Imagen con ruido gaussiano.
+
     '''
 
     gaussian_noise=np.random.normal(loc=0.0, scale=sigma,size=np.shape(image))#Creación del ruido mediante una distribución normal a la que entra sigma como parámetro.
@@ -33,16 +37,19 @@ def add_gnoise(image,sigma):
 '''----------------------Ruido Impulsivo-------------------'''
 def salpimienta(image,intensity):
     '''
+
     Parameters
     ----------
     image : Array of float32
         Imagen a la que queremos añadir ruido.
     intensity : float
         Parámetro que modula la cantidad de ruido impulsivo que añadimos.
+
     Returns
     -------
     ruido_output: Array of float64
         Imagen con ruido gaussiano.
+
     '''
     cant = intensity
     ruido_output= np.copy(image)
@@ -89,10 +96,12 @@ def nlm(img_ori,img_pad, h_square):
         Imagen ruidosa a filtrar.
     h_square : float
         Parámetro de similitud asociado al grado de filtrado.
+
     Returns
     -------
     matriz_imagen : Array of float64
         Imagen filtrada mediante NLM.
+
     '''
 
     #img_pad = np.pad(img_ori,1, mode='reflect') #Realizamos el padding de la imagen    
@@ -273,8 +282,35 @@ def aniso_filter(img, iteraciones, threshold):
     cont=0
     
     while cont<iteraciones:
-        
-        '''
+        if cont==0:
+            #aplicamos sobel a una imagen con ruido
+            img_sobel_g=filters.sobel(img)
+
+            #realizamos el padding con img sobel
+            img_sobel_g_pad=np.pad(img_sobel_g, 1, mode='reflect')
+
+            #matriz para almacenar 
+            values=np.zeros(shape=(img_sobel_g.shape[0],img_sobel_g.shape[1]))
+            #aplicamos algoritmo anisotropico
+            
+
+            img_noisy_pad=np.pad(img, 1, mode='reflect') #padding de la original
+            cont=cont+1
+        else:
+                    #aplicamos sobel a una imagen con ruido
+            img_sobel_g=filters.sobel(values)
+
+            #realizamos el padding con img sobel
+            img_sobel_g_pad=np.pad(img_sobel_g, 1, mode='reflect')
+
+            img_noisy_pad=np.pad(values, 1, mode='reflect') #padding de la original
+            #matriz para almacenar 
+            values=np.zeros(shape=(img_sobel_g.shape[0],img_sobel_g.shape[1]))
+            
+            cont=cont+1
+
+         
+            '''
         Fallo importante. El número de iteraciones indica el número de veces
         que queréis que se repita este proceso. Intuitivamente, lo que podríais
         pensar es que, a más iteraciones, más suavizado. Sin embargo, tal y como
@@ -288,33 +324,6 @@ def aniso_filter(img, iteraciones, threshold):
         Dicho de otra forma: las variables img_sobel_g_pad e img_noisy_pad las
         debéis volver a calcular con la matriz values que sacáis al final.
         '''
-        
-        if cont==0:
-            #aplicamos sobel a una imagen con ruido
-            img_sobel_g=filters.sobel(img)
-
-            #realizamos el padding con img sobel
-            img_sobel_g_pad=np.pad(img_sobel_g, 1, mode='reflect')
-
-            #matriz para almacenar 
-            values=np.zeros(shape=(img_sobel_g.shape[0],img_sobel_g.shape[1]))
-            #aplicamos algoritmo anisotropico
-            cont=0
-
-            img_noisy_pad=np.pad(img, 1, mode='reflect') #padding de la original
-        else:
-                    #aplicamos sobel a una imagen con ruido
-            img_sobel_g=filters.sobel(values)
-
-            #realizamos el padding con img sobel
-            img_sobel_g_pad=np.pad(img_sobel_g, 1, mode='reflect')
-
-            img_noisy_pad=np.pad(values, 1, mode='reflect') #padding de la original
-            #matriz para almacenar 
-            values=np.zeros(shape=(img_sobel_g.shape[0],img_sobel_g.shape[1]))
-
-
-            img_noisy_pad=np.pad(img, 1, mode='reflect') #padding de la original
 
         for i in range(1,img_sobel_g_pad.shape[0]-1):
             for j in range(1,img_sobel_g_pad.shape[1]-1):
@@ -336,17 +345,119 @@ def aniso_filter(img, iteraciones, threshold):
                 else:
                     values[i-1, j-1]=img[i-1, j-1]
         
-        cont=cont+1
+       
 
 
     return values
 
 
+#Función del filtro anisotrópico del script facilitado en aula virtual 
 
-
-
-
-
-
-
-
+def anisodiff(img,niter=1,kappa=50,gamma=0.1,step=(1.,1.),option=1,plot_flag=False):
+        """
+        Anisotropic diffusion.
+ 
+        Usage:
+        imgout = anisodiff(im, niter, kappa, gamma, option)
+ 
+        Arguments:
+                img    - input image
+                niter  - number of iterations
+                kappa  - conduction coefficient 20-100 ?
+                gamma  - max value of .25 for stability
+                step   - tuple, the distance between adjacent pixels in (y,x)
+                option - 1 Perona Malik diffusion equation No 1
+                         2 Perona Malik diffusion equation No 2
+                plot_flag - if True, the image will be plotted
+ 
+        Returns:
+                imgout   - diffused image.
+ 
+        kappa controls conduction as a function of gradient.  If kappa is low
+        small intensity gradients are able to block conduction and hence diffusion
+        across step edges.  A large value reduces the influence of intensity
+        gradients on conduction.
+ 
+        gamma controls speed of diffusion (you usually want it at a maximum of
+        0.25)
+ 
+        step is used to scale the gradients in case the spacing between adjacent
+        pixels differs in the x and y axes
+ 
+        Diffusion equation 1 favours high contrast edges over low contrast ones.
+        Diffusion equation 2 favours wide regions over smaller ones.
+ 
+        Reference:
+        P. Perona and J. Malik.
+        Scale-space and edge detection using ansotropic diffusion.
+        IEEE Transactions on Pattern Analysis and Machine Intelligence,
+        12(7):629-639, July 1990.
+ 
+        Original MATLAB code by Peter Kovesi  
+        School of Computer Science & Software Engineering
+        The University of Western Australia
+        pk @ csse uwa edu au
+        <http://www.csse.uwa.edu.au>
+ 
+        Translated to Python and optimised by Alistair Muldal
+        Department of Pharmacology
+        University of Oxford
+        <alistair.muldal@pharm.ox.ac.uk>
+ 
+        June 2000  original version.      
+        March 2002 corrected diffusion eqn No 2.
+        July 2012 translated to Python
+        """
+ 
+        # initialize output array
+        img = img.astype('float64')
+        imgout = img.copy()
+ 
+        # initialize some internal variables
+        deltaS = np.zeros_like(imgout)
+        deltaE = deltaS.copy()
+        NS = deltaS.copy()
+        EW = deltaS.copy()
+        gS = np.ones_like(imgout)
+        gE = gS.copy()    
+ 
+        for ii in range(niter):
+ 
+                # calculate the diffs
+                deltaS[:-1,: ] = np.diff(imgout,axis=0)
+                deltaE[: ,:-1] = np.diff(imgout,axis=1)
+ 
+                # conduction gradients (only need to compute one per dim!)
+                if option == 1:
+                        gS = np.exp(-(deltaS/kappa)**2.)/step[0]
+                        gE = np.exp(-(deltaE/kappa)**2.)/step[1]
+                elif option == 2:
+                        gS = 1./(1.+(deltaS/kappa)**2.)/step[0]
+                        gE = 1./(1.+(deltaE/kappa)**2.)/step[1]
+ 
+                # update matrices
+                E = gE*deltaE
+                S = gS*deltaS
+ 
+                # subtract a copy that has been shifted 'North/West' by one
+                # pixel. don't as questions. just do it. trust me.
+                NS[:] = S
+                EW[:] = E
+                NS[1:,:] -= S[:-1,:]
+                EW[:,1:] -= E[:,:-1]
+ 
+                # update the image
+                imgout += gamma*(NS+EW)
+ 
+                               
+        if plot_flag:
+             # create the plot figure, if requested
+            plt.figure(figsize=(12, 5))
+            plt.subplot(121)
+            plt.imshow(img, cmap=plt.cm.gray)
+            plt.title('Original image'), plt.axis('off')
+            plt.subplot(122)
+            plt.imshow(imgout, cmap=plt.cm.gray)
+            plt.title('Filtered image (Anisotropic Diffusion)'), plt.axis('off')
+ 
+        return imgout
