@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Oct 21 22:25:34 2020
-
 @author: nakag
 """
 #
@@ -15,19 +14,16 @@ from numba import njit, prange
 '''----------------------Ruido Gaussiano-------------------'''
 def add_gnoise(image,sigma):
     '''
-
     Parameters
     ----------
     image : Array of float32
         Imagen a la que queremos añadir ruido.
     sigma : float
         Parámetro que modula la cantidad de ruido gausiano que añadimos (desviación típica de la distribución normal).
-
     Returns
     -------
     noisy : Array of float64
         Imagen con ruido gaussiano.
-
     '''
 
     gaussian_noise=np.random.normal(loc=0.0, scale=sigma,size=np.shape(image))#Creación del ruido mediante una distribución normal a la que entra sigma como parámetro.
@@ -37,19 +33,16 @@ def add_gnoise(image,sigma):
 '''----------------------Ruido Impulsivo-------------------'''
 def salpimienta(image,intensity):
     '''
-
     Parameters
     ----------
     image : Array of float32
         Imagen a la que queremos añadir ruido.
     intensity : float
         Parámetro que modula la cantidad de ruido impulsivo que añadimos.
-
     Returns
     -------
     ruido_output: Array of float64
         Imagen con ruido gaussiano.
-
     '''
     cant = intensity
     ruido_output= np.copy(image)
@@ -96,12 +89,10 @@ def nlm(img_ori,img_pad, h_square):
         Imagen ruidosa a filtrar.
     h_square : float
         Parámetro de similitud asociado al grado de filtrado.
-
     Returns
     -------
     matriz_imagen : Array of float64
         Imagen filtrada mediante NLM.
-
     '''
 
     #img_pad = np.pad(img_ori,1, mode='reflect') #Realizamos el padding de la imagen    
@@ -278,36 +269,48 @@ def nlm_cpp(img_ori, img_pad, h_square, D_0, alpha):
 
 '''----------------------Filtro Anisotrópico-------------------'''  
 
-def aniso_filter(img, iteraciones, threshold):            
+def aniso_filter(img, iteraciones, threshold):   
+    
+    #creamos un contador para contabilizar cuando hemos terminado la primera iteración
     cont=0
     
+    #Inicializamos un bucle while teniendo en cuenta que se va a ejecutar siempre y cuando  
+    #la variable cont sea menor que el de las iteraciones que hemos determinado
+    
     while cont<iteraciones:
-        if cont==0:
+        if cont==0:  #este if solo se ejecuta durante la primera iteración
+            
             #aplicamos sobel a una imagen con ruido
             img_sobel_g=filters.sobel(img)
 
             #realizamos el padding con img sobel
             img_sobel_g_pad=np.pad(img_sobel_g, 1, mode='reflect')
+            
+            #padding de la imagen original, es decir, la imagen con ruido
+            img_noisy_pad=np.pad(img, 1, mode='reflect') 
 
             #matriz para almacenar 
             values=np.zeros(shape=(img_sobel_g.shape[0],img_sobel_g.shape[1]))
-            #aplicamos algoritmo anisotropico
+              
+            cont=cont+1 #contabilizamos la primera iteración
             
-
-            img_noisy_pad=np.pad(img, 1, mode='reflect') #padding de la original
-            cont=cont+1
-        else:
-                    #aplicamos sobel a una imagen con ruido
+        else: # se ejecuta cuando se supera la primera iteración 
+            
+            #el procedimiento e
+            
+            #aplicamos sobel a una imagen con ruido
             img_sobel_g=filters.sobel(values)
 
             #realizamos el padding con img sobel
             img_sobel_g_pad=np.pad(img_sobel_g, 1, mode='reflect')
 
-            img_noisy_pad=np.pad(values, 1, mode='reflect') #padding de la original
+            #padding de la original, la imagen con ruido
+            img_noisy_pad=np.pad(values, 1, mode='reflect') 
+            
             #matriz para almacenar 
             values=np.zeros(shape=(img_sobel_g.shape[0],img_sobel_g.shape[1]))
             
-            cont=cont+1
+            cont=cont+1  #sumamos una iteración más contabilizando que se ejecuta el proceso
 
          
             '''
@@ -325,30 +328,55 @@ def aniso_filter(img, iteraciones, threshold):
         debéis volver a calcular con la matriz values que sacáis al final.
         '''
 
+        #aplicamos algoritmo anisotrópico
+        
+        #primero realizamos  dos bucles for para poder iterar por la imagen
+        
         for i in range(1,img_sobel_g_pad.shape[0]-1):
             for j in range(1,img_sobel_g_pad.shape[1]-1):
-    
+                
+                #creamos un parche 3x3 con el que guardar las intensidades de grises de la imagen 
+                #Este parche irá iterando por toda la imagen
+                
                 parche_sobel = np.array([[img_sobel_g_pad[i-1,j-1],img_sobel_g_pad[i-1,j],img_sobel_g_pad[i-1,j+1]], 
                                        [img_sobel_g_pad[i,j-1],img_sobel_g_pad[i,j],img_sobel_g_pad[i,j+1]], 
                                         [img_sobel_g_pad[i+1,j-1],img_sobel_g_pad[i+1,j],img_sobel_g_pad[i+1,j+1]]])
                 
                 
-                
+                # definimos la variable gradiente como el sumatorio de las intensidades de la imagen de sobel.
                 gradiente= np.sum(parche_sobel)
                     
+                # ahora creamos un if para diferenciar las zonas por las que el algoritmo va a poder suavizar (zonas homogéneas)
+                # y las zonas que no debe suavizar (bordes)
+                
                 if gradiente<threshold:
+                    
+                    # si el gradiente es menor que el umbral definido entonces estamos ante una zona homogénea
+                    # como es una zona homogénea y por tanto vamos a poder 'suavizar' la zona
+                    
+                    # creamos un parche 3x3 donde recoger las intensidades de gris de la imagen
                     parche_noisy = np.array([[img_noisy_pad[i-1,j-1],img_noisy_pad[i-1,j],img_noisy_pad[i-1,j+1]], 
                                        [img_noisy_pad[i,j-1],img_noisy_pad[i,j],img_noisy_pad[i,j+1]], 
                                         [img_noisy_pad[i+1,j-1],img_noisy_pad[i+1,j],img_noisy_pad[i+1,j+1]]])
+                    
+                    # calculamos la media de las intensidades del parche                
                     mean=np.mean(parche_noisy)
+                    
+                    # introducimos el valor de la intensidad media en la matriz de almacenamiento values, 
+                    # en la coordenada [i-1, j-1]                   
                     values[i-1, j-1]=mean
+                    
                 else:
+                    
+                    # si el gradiente es mayor que el umbral entonces estamos ante un borde
+                    # como es una zona de borde, no se 'suaviza', por lo que almacenamos en la matriz values
+                    # los valores originales de la imagen con ruido en las coordenadas [i-1, j-1]
                     values[i-1, j-1]=img[i-1, j-1]
         
        
 
-
-    return values
+    #devolvemos la matriz values finalmente con la imagen resultante del filtrado anisotrópico
+    return values  
 
 
 #Función del filtro anisotrópico del script facilitado en aula virtual 
