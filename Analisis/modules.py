@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Oct 21 22:25:34 2020
-
 @author: nakag
 """
 #
@@ -15,19 +14,16 @@ from numba import njit, prange
 '''----------------------Ruido Gaussiano-------------------'''
 def add_gnoise(image,sigma):
     '''
-
     Parameters
     ----------
     image : Array of float32
         Imagen a la que queremos añadir ruido.
     sigma : float
         Parámetro que modula la cantidad de ruido gausiano que añadimos (desviación típica de la distribución normal).
-
     Returns
     -------
     noisy : Array of float64
         Imagen con ruido gaussiano.
-
     '''
 
     gaussian_noise=np.random.normal(loc=0.0, scale=sigma,size=np.shape(image))#Creación del ruido mediante una distribución normal a la que entra sigma como parámetro.
@@ -37,19 +33,16 @@ def add_gnoise(image,sigma):
 '''----------------------Ruido Impulsivo-------------------'''
 def salpimienta(image,intensity):
     '''
-
     Parameters
     ----------
     image : Array of float32
         Imagen a la que queremos añadir ruido.
     intensity : float
         Parámetro que modula la cantidad de ruido impulsivo que añadimos.
-
     Returns
     -------
     ruido_output: Array of float64
         Imagen con ruido gaussiano.
-
     '''
     cant = intensity
     ruido_output= np.copy(image)
@@ -96,12 +89,10 @@ def nlm(img_ori,img_pad, h_square):
         Imagen ruidosa a filtrar.
     h_square : float
         Parámetro de similitud asociado al grado de filtrado.
-
     Returns
     -------
     matriz_imagen : Array of float64
         Imagen filtrada mediante NLM.
-
     '''
 
     #img_pad = np.pad(img_ori,1, mode='reflect') #Realizamos el padding de la imagen    
@@ -280,32 +271,7 @@ def nlm_cpp(img_ori, img_pad, h_square, D_0, alpha):
 
 def aniso_filter(img, iteraciones, threshold):            
     cont=0
-    if cont==0:
-        #aplicamos sobel a una imagen con ruido
-        img_sobel_g=filters.sobel(img)
-        
-        #realizamos el padding con img sobel
-        img_sobel_g_pad=np.pad(img_sobel_g, 1, mode='reflect')
-        
-        #matriz para almacenar 
-        values=np.zeros(shape=(img_sobel_g.shape[0],img_sobel_g.shape[1]))
-        #aplicamos algoritmo anisotropico
-        cont=0
-        
-        img_noisy_pad=np.pad(img, 1, mode='reflect') #padding de la original
-    else:
-                #aplicamos sobel a una imagen con ruido
-        img_sobel_g=filters.sobel(values)
-        
-        #realizamos el padding con img sobel
-        img_sobel_g_pad=np.pad(img_sobel_g, 1, mode='reflect')
-                
-        img_noisy_pad=np.pad(values, 1, mode='reflect') #padding de la original
-        #matriz para almacenar 
-        values=np.zeros(shape=(img_sobel_g.shape[0],img_sobel_g.shape[1]))
-
-        
-        img_noisy_pad=np.pad(img, 1, mode='reflect') #padding de la original
+    
     while cont<iteraciones:
         
         '''
@@ -322,6 +288,33 @@ def aniso_filter(img, iteraciones, threshold):
         Dicho de otra forma: las variables img_sobel_g_pad e img_noisy_pad las
         debéis volver a calcular con la matriz values que sacáis al final.
         '''
+        
+        if cont==0:
+            #aplicamos sobel a una imagen con ruido
+            img_sobel_g=filters.sobel(img)
+
+            #realizamos el padding con img sobel
+            img_sobel_g_pad=np.pad(img_sobel_g, 1, mode='reflect')
+
+            #matriz para almacenar 
+            values=np.zeros(shape=(img_sobel_g.shape[0],img_sobel_g.shape[1]))
+            #aplicamos algoritmo anisotropico
+            cont=0
+
+            img_noisy_pad=np.pad(img, 1, mode='reflect') #padding de la original
+        else:
+                    #aplicamos sobel a una imagen con ruido
+            img_sobel_g=filters.sobel(values)
+
+            #realizamos el padding con img sobel
+            img_sobel_g_pad=np.pad(img_sobel_g, 1, mode='reflect')
+
+            img_noisy_pad=np.pad(values, 1, mode='reflect') #padding de la original
+            #matriz para almacenar 
+            values=np.zeros(shape=(img_sobel_g.shape[0],img_sobel_g.shape[1]))
+
+
+            img_noisy_pad=np.pad(img, 1, mode='reflect') #padding de la original
 
         for i in range(1,img_sobel_g_pad.shape[0]-1):
             for j in range(1,img_sobel_g_pad.shape[1]-1):
@@ -347,3 +340,13 @@ def aniso_filter(img, iteraciones, threshold):
 
 
     return values
+
+
+
+
+
+
+
+
+
+
