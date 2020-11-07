@@ -70,3 +70,13 @@ def comparar_salpimienta(img_salpimienta, iteraciones, threshold, cont):
     title2 = 'Aniso '+str(cont)
     plt.title(title2), plt.axis('off')
     plt.imshow(desalt_img, cmap=plt.cm.gray)
+    
+'''----------------------Batch algoritmos NLM---------------'''
+    
+def all_filters(img, nlm, sp, cpp1, cpp2, cpp3):
+    img_pad = np.pad(img,1, mode='reflect')
+    matriz_imagen1 = modules.nlm(img,img_pad, nlm)
+    nlm_samepatch = modules.nlm_samepatch(img,img_pad, sp)
+    nlm_cpp = modules.nlm_cpp(img, img_pad,cpp1, cpp2, cpp3)
+
+    return matriz_imagen1, nlm_samepatch, nlm_cpp
