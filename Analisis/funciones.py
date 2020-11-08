@@ -23,7 +23,7 @@ from nilearn import plotting
 def image_prep(img):
     
     #Vamos a probar los algoritmos con imágenes más pequeñas para disminuir el tiempo de computación
-    a = np.array(skimage.transform.resize(img.dataobj, (50,70)))
+    a = np.array(skimage.transform.resize(img.dataobj, (100,140)))
     #a = np.array(skimage.transform.rescale(img.dataobj,0.3))   
     img_gray= a[:,:,128] #elegimos el corte
     
