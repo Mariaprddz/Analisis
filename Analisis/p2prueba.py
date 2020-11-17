@@ -39,8 +39,7 @@ img_o=img_o/np.max(img_o)
 
 #%%
 #def RegionGrowingP2(img, rango_inferior, rango_superior):
-#imagen con padding
-img_pad = np.pad(img_o,1, mode='reflect')    
+    
 
 plt.imshow(img_o, cmap='gray')
 click_markers = plt.ginput(n=1,timeout=30)
@@ -73,29 +72,40 @@ region= np.zeros(shape=(img_o.shape[0],img_o.shape[1]))
 region[pixels[0],pixels[1]]=1
 #definimos variables de umbral 
 umbral_inf=0.2
-umbral_sup=0.6
-intervalo_inf = img_o[pixels[0],pixels[1]]-0.2
-intervalo_sup = img_o[pixels[0],pixels[1]]+0.2
+umbral_sup=0.1
+intervalo_inf = img_o[pixels[0],pixels[1]]-umbral_inf
+intervalo_sup = img_o[pixels[0],pixels[1]]+umbral_sup
 
 
 
     
-for i in range(1,img_pad.shape[0]-1):
-    for j in range(1,img_pad.shape[1]-1):
-                
-    
-        if [i,j]==[pixels[0],pixels[1]]:
-            for x in range (0, 8):
 
-                if intervalo_inf<=img_pad[i+coords[x,0], j+coords[x,1]]<=intervalo_sup :
+print (img_o.shape)                
+
+for x in range (0, coords.shape[0]):
+
+    if intervalo_inf<=img_o[pixels[0]+coords[x,0], pixels[1]+coords[x,1]]<=intervalo_sup :
                             
-                    region[i+coords[x,0], j+coords[x,1]] = 1      
-    
-                else:
-                    pass
+        region[pixels[0]+coords[x,0], pixels[1]+coords[x,1]] = 1      
+        
+    else:
+        pass
                 
-   
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+print(listOfCoordinates)
     
+for i in range (0, listOfCoordinates.shape[0]):
+    for j in range (0, listOfCoordinates.shape[1]):
+        
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[i+coords[x,0], j+coords[x,1]]<=intervalo_sup :
+                            
+                region[i+coords[x,0], j+coords[x,1]] = 1      
+        
+            else:
+                pass
     
  #%%
   
