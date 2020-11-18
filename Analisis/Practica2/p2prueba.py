@@ -71,7 +71,7 @@ region= np.zeros(shape=(img_o.shape[0],img_o.shape[1]))
 #guardar nuestro pixel semilla en la ROI y lo llevamos a blanco
 region[pixels[0],pixels[1]]=1
 #definimos variables de umbral 
-umbral_inf=0.2
+umbral_inf=0.3
 umbral_sup=0.1
 intervalo_inf = img_o[pixels[0],pixels[1]]-umbral_inf
 intervalo_sup = img_o[pixels[0],pixels[1]]+umbral_sup
@@ -92,8 +92,67 @@ for x in range (0, coords.shape[0]):
         pass
                 
 new_pix = np.where(region == 1)
+Coordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+listOfCoordinates = list(zip(new_pix[0], new_pix[1]))
+regionCoords =[0]*(len(listOfCoordinates)+1)
+print(len (listOfCoordinates),len(regionCoords))
+            
+while len (listOfCoordinates)<len(regionCoords):
+    new_pix = np.where(region == 1)
+    Coordinates = np.array(list(zip(new_pix[0], new_pix[1]))) 
+    listOfCoordinates = list(zip(new_pix[0], new_pix[1]))
+    
+    for i in range (0, Coordinates.shape[0]):
+    
+            for x in range (0, 8):
+    
+                if intervalo_inf<=img_o[Coordinates[i,0]+coords[x,0], Coordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                                
+                    region[Coordinates[i,0]+coords[x,0], Coordinates[i,1]+coords[x,1]] = 1      
+                    
+                else:
+                    pass
+    regionCoords = np.where(region == 1)
+    regionCoords = list(zip(regionCoords[0], regionCoords[1]))
+    print(len (listOfCoordinates),len(regionCoords))
+            
+                                                                                            
+
+
+            
+            
+ #%%
+#Pasar nuestra a un array
+pixels = np.array(seed)
+
+#crear una matriz de ceros
+region= np.zeros(shape=(img_o.shape[0],img_o.shape[1]))
+
+#guardar nuestro pixel semilla en la ROI y lo llevamos a blanco
+region[pixels[0],pixels[1]]=1
+#definimos variables de umbral 
+umbral_inf=0.3
+umbral_sup=0.2
+intervalo_inf = img_o[pixels[0],pixels[1]]-umbral_inf
+intervalo_sup = img_o[pixels[0],pixels[1]]+umbral_sup
+
+
+
+    
+
+print (img_o.shape)                
+
+for x in range (0, coords.shape[0]):
+
+    if intervalo_inf<=img_o[pixels[0]+coords[x,0], pixels[1]+coords[x,1]]<=intervalo_sup :
+                            
+        region[pixels[0]+coords[x,0], pixels[1]+coords[x,1]] = 1      
+        
+    else:
+        pass
+                
+new_pix = np.where(region == 1)
 listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
-print(listOfCoordinates[0,1])
     
 for i in range (0, listOfCoordinates.shape[0]):
 
@@ -105,7 +164,1069 @@ for i in range (0, listOfCoordinates.shape[0]):
         
             else:
                 pass
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
     
- #%%
-  
+for i in range (0, listOfCoordinates.shape[0]):
 
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass            
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
+            
+new_pix = np.where(region == 1)
+listOfCoordinates = np.array(list(zip(new_pix[0], new_pix[1])))
+
+    
+for i in range (0, listOfCoordinates.shape[0]):
+
+        for x in range (0, 8):
+
+            if intervalo_inf<=img_o[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                            
+                region[listOfCoordinates[i,0]+coords[x,0], listOfCoordinates[i,1]+coords[x,1]] = 1      
+        
+            else:
+                pass
+            
