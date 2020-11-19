@@ -72,7 +72,7 @@ region= np.zeros(shape=(img_o.shape[0],img_o.shape[1]))
 #guardar nuestro pixel semilla en la ROI y lo llevamos a blanco
 region[pixels[0],pixels[1]]=1
 #definimos variables de umbral 
-umbral_inf=0.3
+umbral_inf=0.1
 umbral_sup=0.1
 intervalo_inf = img_o[pixels[0],pixels[1]]-umbral_inf
 intervalo_sup = img_o[pixels[0],pixels[1]]+umbral_sup
@@ -119,7 +119,7 @@ while len (listOfCoordinates)!=len(regionCoords):
             
                                                                                             
 plt.figure()
-plt.title('Máscarita puñetera de 1')
+plt.title('Mascarita puñetera de 1')
 plt.imshow(region, cmap=plt.cm.gray)
 
             
@@ -140,14 +140,16 @@ print(markers)
 white_dots= np.zeros(shape=(img_o.shape[0],img_o.shape[1]))
 
 white_dots[markers[:,0], markers[:,1]] = 1
-    
+plt.title('mascarita binaria')
+plt.imshow(white_dots, cmap=plt.cm.gray)    
 
-mins = imimposemin(img_sobel, white_dots)     #modifica la imagen de la máscara en escala de grises utilizando la reconstrucción morfológica por lo que sólo tiene mínimo regional donde la imagen de marcador binario es distinto de cero.IBW
+minimos = imimposemin(img_sobel, white_dots)     #modifica la imagen de la máscara en escala de grises utilizando la reconstrucción morfológica por lo que sólo tiene mínimo regional donde la imagen de marcador binario es distinto de cero.IBW
 
-#watershed = watershed(img_sobel, mins)
-watershed = watershed(img_o)
-
-plt.imshow(watershed, cmap=plt.cm.nipy_spectral, alpha=0.7)
+watershed1= watershed(img_sobel)
+watershed2 = watershed(minimos)
+#%%
+plt.imshow(img_sobel, cmap=plt.cm.gray)
+plt.imshow(watershed2, cmap=plt.cm.nipy_spectral, alpha=0.3)
 
 
 
