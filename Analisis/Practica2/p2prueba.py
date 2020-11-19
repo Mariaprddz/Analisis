@@ -106,17 +106,20 @@ while len (listOfCoordinates)!=len(regionCoords):
     for i in range (0, Coordinates.shape[0]):
     
             for x in range (0, 8):
-    
-                if intervalo_inf<=img_o[Coordinates[i,0]+coords[x,0], Coordinates[i,1]+coords[x,1]]<=intervalo_sup :
-                                
-                    region[Coordinates[i,0]+coords[x,0], Coordinates[i,1]+coords[x,1]] = 1      
-                    
+                if Coordinates[i,0]+coords[x,0] > 0 and Coordinates[i,1]+coords[x,1]>0 and Coordinates[i,0]+coords[x,0]<img_o.shape[0] and Coordinates[i,1]+coords[x,1]<img_o.shape[1]:
+                    if intervalo_inf<=img_o[Coordinates[i,0]+coords[x,0], Coordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                                    
+                        region[Coordinates[i,0]+coords[x,0], Coordinates[i,1]+coords[x,1]] = 1      
+                        
+                    else:
+                        pass
                 else:
                     pass
     regionCoords = np.where(region == 1)
     regionCoords = list(zip(regionCoords[0], regionCoords[1]))
     print(len (listOfCoordinates),len(regionCoords))
-            
+    
+    #return region            
                                                                                             
 plt.figure()
 plt.title('Mascarita puñetera de 1')
@@ -124,32 +127,43 @@ plt.imshow(region, cmap=plt.cm.gray)
 
             
 #%%
-img_sobel=filters.sobel(img_o)  
-          
-plt.figure()
-plt.title('sobelsito')
+
+def WatershedExerciseP2(img):
+    img_o = img
+    img_sobel=filters.sobel(img_o)  
+              
+    plt.figure()
+    plt.title('sobelsito')
+    plt.imshow(img_sobel, cmap=plt.cm.gray)
+    
+    plt.title('semillitas')
+    plt.imshow(img_o, cmap='gray')
+    click_markers = plt.ginput(n=3)
+    clicks = [(sub[1], sub[0]) for sub in click_markers]
+    markers = np.array(clicks,dtype = int)
+    
+    print(markers)
+    white_dots= np.zeros(shape=(img_o.shape[0],img_o.shape[1]))
+    
+    white_dots[markers[:,0], markers[:,1]] = 1
+    plt.title('mascarita binaria')
+    plt.imshow(white_dots, cmap=plt.cm.gray)    
+    
+    minimos = imimposemin(img_sobel, white_dots)     #modifica la imagen de la máscara en escala de grises utilizando la reconstrucción morfológica por lo que sólo tiene mínimo regional donde la imagen de marcador binario es distinto de cero.IBW
+    
+    watershed1= watershed(img_sobel)
+    watershed2 = watershed(minimos)
+    
+    return watershed1, watershed2
+#%%
+watershed1, watershed2 =  WatershedExerciseP2(img_o)
+img_sobel=filters.sobel(img_o) 
+
 plt.imshow(img_sobel, cmap=plt.cm.gray)
-
-plt.title('semillitas')
-plt.imshow(img_o, cmap='gray')
-click_markers = plt.ginput(n=3)
-clicks = [(sub[1], sub[0]) for sub in click_markers]
-markers = np.array(clicks,dtype = int)
-
-print(markers)
-white_dots= np.zeros(shape=(img_o.shape[0],img_o.shape[1]))
-
-white_dots[markers[:,0], markers[:,1]] = 1
-plt.title('mascarita binaria')
-plt.imshow(white_dots, cmap=plt.cm.gray)    
-
-minimos = imimposemin(img_sobel, white_dots)     #modifica la imagen de la máscara en escala de grises utilizando la reconstrucción morfológica por lo que sólo tiene mínimo regional donde la imagen de marcador binario es distinto de cero.IBW
-
-watershed1= watershed(img_sobel)
-watershed2 = watershed(minimos)
+plt.imshow(watershed1, cmap='viridis', alpha=0.3)
 #%%
 plt.imshow(img_sobel, cmap=plt.cm.gray)
-plt.imshow(watershed2, cmap=plt.cm.nipy_spectral, alpha=0.3)
+plt.imshow(watershed2, cmap='viridis', alpha=0.3)
 
 
 
