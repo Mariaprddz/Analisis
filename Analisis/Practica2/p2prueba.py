@@ -95,10 +95,10 @@ for x in range (0, coords.shape[0]):
 new_pix = np.where(region == 1)
 Coordinates = np.array(list(zip(new_pix[0], new_pix[1])))
 listOfCoordinates = list(zip(new_pix[0], new_pix[1]))
-regionCoords =[0]*(len(listOfCoordinates)+1)
+regionCoords =[]
 print(len (listOfCoordinates),len(regionCoords))
             
-while len (listOfCoordinates)<len(regionCoords):
+while len (listOfCoordinates)!=len(regionCoords):
     new_pix = np.where(region == 1)
     Coordinates = np.array(list(zip(new_pix[0], new_pix[1]))) 
     listOfCoordinates = list(zip(new_pix[0], new_pix[1]))
@@ -127,10 +127,10 @@ plt.imshow(region, cmap=plt.cm.gray)
 img_sobel=filters.sobel(img_o)  
           
 plt.figure()
-plt.title('sobel')
+plt.title('sobelsito')
 plt.imshow(img_sobel, cmap=plt.cm.gray)
 
-
+plt.title('semillitas')
 plt.imshow(img_o, cmap='gray')
 click_markers = plt.ginput(n=3)
 clicks = [(sub[1], sub[0]) for sub in click_markers]
