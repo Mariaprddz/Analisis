@@ -21,54 +21,13 @@ from skimage.color import rgb2gray
 from skimage.transform import resize 
 from imimposemin import imimposemin
 from skimage.segmentation import watershed
-#%%
-
-img = nib.load(r'\Users\nakag\OneDrive\Escritorio\squizo\sub-02\anat\sub-02_T1w.nii.gz')
-
-
-from nilearn import plotting
-
-a = np.array(skimage.transform.resize(img.dataobj, (120,180)))
-
-
-img_gray= a[:,:,128]  
-
-
-#normalizo la imagen, el rango irá a partir de ahora [0,1], así que ojo a la hora de meter rangos en region growing
-img_o=img_gray
-img_o=img_o/np.max(img_o) 
-
-#%%
-#def RegionGrowingP2(img, rango_inferior, rango_superior):
-    
-
-plt.imshow(img_o, cmap='gray')
-click_markers = plt.ginput(n=1,timeout=30)
-print(click_markers[0])
-click_markers = list(click_markers[0])
-print(click_markers)
-     
-markers = [round(num) for num in click_markers ]
-seed = [markers[1],markers[0]] 
- 
-
-print(seed)
-
-
-# [img_pad[i-1,j-1],img_pad[i-1,j],img_pad[i-1,j+1]], 
-#                                 [img_pad[i,j-1],img_pad[i,j],img_pad[i,j+1]], 
-#                                 [img_pad[i+1,j-1],img_pad[i+1,j],img_pad[i+1,j+1]
-#%%
-coords = np.array([(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)])
 
     
-#%%
 
 def RegionGrowingP2(img, umbral_inf, umbral_sup):
-    img = img_o
+    img_o = img
     plt.imshow(img_o, cmap='gray')
     click_markers = plt.ginput(n=1,timeout=30)
-    print(click_markers[0])
     click_markers = list(click_markers[0])
     print(click_markers)
          
@@ -94,11 +53,6 @@ def RegionGrowingP2(img, umbral_inf, umbral_sup):
     intervalo_inf = img_o[pixels[0],pixels[1]]-umbral_inf
     intervalo_sup = img_o[pixels[0],pixels[1]]+umbral_sup
     
-    
-    
-        
-    
-    print (img_o.shape)                
     
     for x in range (0, coords.shape[0]):
     
@@ -138,13 +92,7 @@ def RegionGrowingP2(img, umbral_inf, umbral_sup):
     
     return region            
 
-region = RegionGrowingP2(img_o, 0.3, 0.1)                                                                                            
-plt.figure()
-plt.title('Mascarita puñetera de 1')
-plt.imshow(region, cmap=plt.cm.gray)
-
             
-#%%
 
 def WatershedExerciseP2(img):
     img_o = img
@@ -173,15 +121,7 @@ def WatershedExerciseP2(img):
     watershed2 = watershed(minimos)
     
     return watershed1, watershed2
-#%%
-watershed1, watershed2 =  WatershedExerciseP2(img_o)
-img_sobel=filters.sobel(img_o) 
 
-plt.imshow(img_sobel, cmap=plt.cm.gray)
-plt.imshow(watershed1, cmap='viridis', alpha=0.3)
-#%%
-plt.imshow(img_sobel, cmap=plt.cm.gray)
-plt.imshow(watershed2, cmap='viridis', alpha=0.3)
 
 
 
