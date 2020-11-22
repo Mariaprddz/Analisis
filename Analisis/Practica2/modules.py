@@ -25,8 +25,8 @@ from skimage.segmentation import watershed
     
 
 def RegionGrowingP2(img, umbral_inf, umbral_sup):
-    img_o = img
-    plt.imshow(img_o, cmap='gray')
+
+    plt.imshow(img, cmap='gray')
     click_markers = plt.ginput(n=1,timeout=30)
     click_markers = list(click_markers[0])
     print(click_markers)
@@ -43,20 +43,20 @@ def RegionGrowingP2(img, umbral_inf, umbral_sup):
     pixels = np.array(seed)
     
     #crear una matriz de ceros
-    region= np.zeros(shape=(img_o.shape[0],img_o.shape[1]))
+    region= np.zeros(shape=(img.shape[0],img.shape[1]))
     
     #guardar nuestro pixel semilla en la ROI y lo llevamos a blanco
     region[pixels[0],pixels[1]]=1
     #definimos variables de umbral 
     #umbral_inf=0.1
     #umbral_sup=0.1
-    intervalo_inf = img_o[pixels[0],pixels[1]]-umbral_inf
-    intervalo_sup = img_o[pixels[0],pixels[1]]+umbral_sup
+    intervalo_inf = img[pixels[0],pixels[1]]-umbral_inf
+    intervalo_sup = img[pixels[0],pixels[1]]+umbral_sup
     
     
     for x in range (0, coords.shape[0]):
     
-        if intervalo_inf<=img_o[pixels[0]+coords[x,0], pixels[1]+coords[x,1]]<=intervalo_sup :
+        if intervalo_inf<=img[pixels[0]+coords[x,0], pixels[1]+coords[x,1]]<=intervalo_sup :
                                 
             region[pixels[0]+coords[x,0], pixels[1]+coords[x,1]] = 1      
             
@@ -77,8 +77,8 @@ def RegionGrowingP2(img, umbral_inf, umbral_sup):
         for i in range (0, Coordinates.shape[0]):
         
                 for x in range (0, 8):
-                    if Coordinates[i,0]+coords[x,0] >= 0 and Coordinates[i,1]+coords[x,1]>= 0 and Coordinates[i,0]+coords[x,0]<img_o.shape[0] and Coordinates[i,1]+coords[x,1]<img_o.shape[1]:
-                        if intervalo_inf<=img_o[Coordinates[i,0]+coords[x,0], Coordinates[i,1]+coords[x,1]]<=intervalo_sup :
+                    if Coordinates[i,0]+coords[x,0] >= 0 and Coordinates[i,1]+coords[x,1]>= 0 and Coordinates[i,0]+coords[x,0]<img.shape[0] and Coordinates[i,1]+coords[x,1]<img.shape[1]:
+                        if intervalo_inf<=img[Coordinates[i,0]+coords[x,0], Coordinates[i,1]+coords[x,1]]<=intervalo_sup :
                                         
                             region[Coordinates[i,0]+coords[x,0], Coordinates[i,1]+coords[x,1]] = 1      
                             
@@ -95,21 +95,21 @@ def RegionGrowingP2(img, umbral_inf, umbral_sup):
             
 
 def WatershedExerciseP2(img):
-    img_o = img
-    img_sobel=filters.sobel(img_o)  
+
+    img_sobel=filters.sobel(img)  
               
     plt.figure()
     plt.title('sobelsito')
     plt.imshow(img_sobel, cmap=plt.cm.gray)
     
     plt.title('semillitas')
-    plt.imshow(img_o, cmap='gray')
-    click_markers = plt.ginput(n=3)
+    plt.imshow(img, cmap='gray')
+    click_markers = plt.ginput(n=6)
     clicks = [(sub[1], sub[0]) for sub in click_markers]
     markers = np.array(clicks,dtype = int)
     
     print(markers)
-    white_dots= np.zeros(shape=(img_o.shape[0],img_o.shape[1]))
+    white_dots= np.zeros(shape=(img.shape[0],img.shape[1]))
     
     white_dots[markers[:,0], markers[:,1]] = 1
     plt.title('mascarita binaria')
