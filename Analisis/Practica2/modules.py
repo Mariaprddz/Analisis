@@ -94,8 +94,9 @@ def RegionGrowingP2(img, umbral_inf, umbral_sup):
 
             
 
-def WatershedExerciseP2(img):
-
+def WatershedExerciseP2(img, numberofseeds):
+    
+    white_dots= np.zeros(shape=(img.shape[0],img.shape[1]))
     img_sobel=filters.sobel(img)  
               
     plt.figure()
@@ -104,12 +105,12 @@ def WatershedExerciseP2(img):
     
     plt.title('semillitas')
     plt.imshow(img, cmap='gray')
-    click_markers = plt.ginput(n=6)
+    click_markers = plt.ginput(n=numberofseeds)
     clicks = [(sub[1], sub[0]) for sub in click_markers]
     markers = np.array(clicks,dtype = int)
     
     print(markers)
-    white_dots= np.zeros(shape=(img.shape[0],img.shape[1]))
+
     
     white_dots[markers[:,0], markers[:,1]] = 1
     plt.title('mascarita binaria')
