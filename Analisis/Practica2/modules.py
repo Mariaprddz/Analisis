@@ -25,21 +25,38 @@ from skimage.segmentation import watershed
     
 
 def RegionGrowingP2(img, umbral_inf, umbral_sup):
+    '''
 
-    plt.imshow(img, cmap='gray')
-    click_markers = plt.ginput(n=1,timeout=30)
-    click_markers = list(click_markers[0])
-    print(click_markers)
+    Parameters
+    ----------
+    img : Array of float32
+        Imagen original
+    umbral_inf : float
+        Umbral por debajo del nivel de gris del punto seleccionado en seed.
+    umbral_sup : float
+        Umbral por encima del nivel de gris del punto seleccionado en seed.
+
+    Returns
+    -------
+    region : Array of float64
+        ROI de la imagen deseada.
+
+    '''
+
+    plt.imshow(img, cmap='gray') #Hacemos la representación la imagen para poder decidir donde posicionar la semilla
+    click_markers = plt.ginput(n=1)  #Utilizamos la funcion .ginput() para posicionamiento de semilla
+    click_markers = list(click_markers[0]) #Transformamos a una lista
+
          
-    markers = [round(num) for num in click_markers ]
-    seed = [markers[1],markers[0]] 
+    markers = [round(num) for num in click_markers ] #Redondeamos a números enteros
+    seed = [markers[1],markers[0]] #Cambiamos el orden de los elementos para poder utilizarlo como coordenadas
      
     
     print(seed)
     
-    coords = np.array([(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)])
+    coords = np.array([(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)]) #Lista de coordenadas para hacer las comparaciones con los píxeles adyacentes
     
-    #Pasar nuestra a un array
+    #Pasar nuestra semilla a un array
     pixels = np.array(seed)
     
     #crear una matriz de ceros
@@ -47,85 +64,94 @@ def RegionGrowingP2(img, umbral_inf, umbral_sup):
     
     #guardar nuestro pixel semilla en la ROI y lo llevamos a blanco
     region[pixels[0],pixels[1]]=1
-    #definimos variables de umbral 
-    #umbral_inf=0.1
-    #umbral_sup=0.1
+    #definimos nuestro intervalo para decidir si incluirlo en la ROI o no
+
     intervalo_inf = img[pixels[0],pixels[1]]-umbral_inf
     intervalo_sup = img[pixels[0],pixels[1]]+umbral_sup
     
-    
+    #Parseamos por la lista coords para ir haciendo la conectividad a 8.
     for x in range (0, coords.shape[0]):
-    
+        #Dfinimos una condicion en la que si la intensidad del pixel comparado se encuentra entre el intervalo de similitud
         if intervalo_inf<=img[pixels[0]+coords[x,0], pixels[1]+coords[x,1]]<=intervalo_sup :
                                 
-            region[pixels[0]+coords[x,0], pixels[1]+coords[x,1]] = 1      
+            region[pixels[0]+coords[x,0], pixels[1]+coords[x,1]] = 1     #Se añade a la ROI sustituyendo en dichas coordenadas por un 1  (se lleva a blanco)
             
         else:
-            pass
+            pass #Si no cumple la condición se prosigue con la comparación
                     
-    new_pix = np.where(region == 1)
-    Coordinates = np.array(list(zip(new_pix[0], new_pix[1])))
-    listOfCoordinates = list(zip(new_pix[0], new_pix[1]))
-    regionCoords =[]
+    new_pix = np.where(region == 1) #Buscamos aquellas coordenadas en las que la matriz region es igual a 1
+    Coordinates = np.array(list(zip(new_pix[0], new_pix[1]))) #Creamos un array con dichas coordenadas
+    listOfCoordinates = list(zip(new_pix[0], new_pix[1])) #lista de las coordenadas
+    regionCoords =[] #creamos una lista vacía para realizar la comparación
     
                 
-    while len (listOfCoordinates)!=len(regionCoords):
-        new_pix = np.where(region == 1)
-        Coordinates = np.array(list(zip(new_pix[0], new_pix[1]))) 
-        listOfCoordinates = list(zip(new_pix[0], new_pix[1]))
+    while len (listOfCoordinates)!=len(regionCoords): #COmparamos las listas de coordenadas de los puntos en los que la región es 1, antes y después de realizar cada iteración de conectividad a 8
+        new_pix = np.where(region == 1)#Buscamos aquellas coordenadas en las que la matriz region es igual a 1
+        Coordinates = np.array(list(zip(new_pix[0], new_pix[1])))  #Creamos un array con dichas coordenadas
+        listOfCoordinates = list(zip(new_pix[0], new_pix[1])) #lista de las coordenadas
         
-        for i in range (0, Coordinates.shape[0]):
+        for i in range (0, Coordinates.shape[0]): #Para todas las coordenadas de los píxeles de la región creamos un bucle for
         
                 for x in range (0, 8):
-                    if Coordinates[i,0]+coords[x,0] >= 0 and Coordinates[i,1]+coords[x,1]>= 0 and Coordinates[i,0]+coords[x,0]<img.shape[0] and Coordinates[i,1]+coords[x,1]<img.shape[1]:
+                    if Coordinates[i,0]+coords[x,0] >= 0 and Coordinates[i,1]+coords[x,1]>= 0 and Coordinates[i,0]+coords[x,0]<img.shape[0] and Coordinates[i,1]+coords[x,1]<img.shape[1]: #Creamos una condición para evitar que el algoritmo de error al comparar píxeles de los bordes de la imagen. 
+                    #Esto lo conseguimos imponiendo que las comparaciones no se hagan sobre coordenadas negativas ni fuera de rango
                         if intervalo_inf<=img[Coordinates[i,0]+coords[x,0], Coordinates[i,1]+coords[x,1]]<=intervalo_sup :
                                         
                             region[Coordinates[i,0]+coords[x,0], Coordinates[i,1]+coords[x,1]] = 1      
-                            
+                            #Volvemos a hacer la misma comparación que en la primera iteración explicada fuera del bucle while
                         else:
                             pass
                     else:
                         pass
-        regionCoords = np.where(region == 1)
-        regionCoords = list(zip(regionCoords[0], regionCoords[1]))
+        regionCoords = np.where(region == 1)#Volvemos a evaluar la nueva roi con cada iteración.
+        regionCoords = list(zip(regionCoords[0], regionCoords[1]))#Convertimos a lista
 
-    
+    #Devolvemos la ROI final como resultado de la función
     return region            
 
-            
+         
 
 def WatershedExerciseP2(img, numberofseeds):
+    '''
     
-    white_dots= np.zeros(shape=(img.shape[0],img.shape[1]))
-    img_sobel=filters.sobel(img)  
-              
-    plt.figure()
-    plt.title('sobelsito')
-    plt.imshow(img_sobel, cmap=plt.cm.gray)
+
+    Parameters
+    ----------
+    img : Array of float32
+        Imagen original.
+    numberofseeds : int
+        Número de semillas que vamos a utilizar.
+
+    Returns
+    -------
+    watershed1 : Array of int32
+        Máscara de regiones tras algoritmo Watershed con img_sobel como input.
+    watershed2 : Array of int32
+        Máscara de regiones tras algoritmo Watershed con minimos como input..
+
+    '''
+    white_dots= np.zeros(shape=(img.shape[0],img.shape[1])) #Matriz de ceros a la que vamos a añadir los mínimos locales introducidos con .ginput()
+    img_sobel=filters.sobel(img)  #Transformamos la imagen original a gradiente mediante el algoritmo de Sobel
+
     
-    plt.title('semillitas')
-    plt.imshow(img, cmap='gray')
-    click_markers = plt.ginput(n=numberofseeds)
-    clicks = [(sub[1], sub[0]) for sub in click_markers]
-    markers = np.array(clicks,dtype = int)
+    plt.title('Semillas')
+    plt.imshow(img, cmap='gray') #Hacemos la representación la imagen para poder decidir donde posicionar las semillas
+    click_markers = plt.ginput(n=numberofseeds) #Utilizamos la funcion .ginput() para posicionamiento de samillas, nótese que el número de estas lo introducimos como parámetro de la función
+    clicks = [(sub[1], sub[0]) for sub in click_markers] #cambiamos el orden de las tuplas obtenidas en .ginput() para poder usarlas como coordenadas.
+    markers = np.array(clicks,dtype = int) #transformamos la lista de tuplas a un array y pasamos de elementos float a int
     
     print(markers)
 
     
-    white_dots[markers[:,0], markers[:,1]] = 1
-    plt.title('mascarita binaria')
+    white_dots[markers[:,0], markers[:,1]] = 1 #Sustituímos los puntos que hemos almacenado en la variable markers por 1s en la matriz de ceros creada al inicio de nuestra función
+    plt.title('Máscara binaria con las semillas')
     plt.imshow(white_dots, cmap=plt.cm.gray)    
     
-    minimos = imimposemin(img_sobel, white_dots)     #modifica la imagen de la máscara en escala de grises utilizando la reconstrucción morfológica por lo que sólo tiene mínimo regional donde la imagen de marcador binario es distinto de cero.IBW
+    minimos = imimposemin(img_sobel, white_dots) #modifica la imagen de la máscara en escala de grises utilizando la reconstrucción morfológica por lo que sólo tiene mínimo regional donde la imagen de marcador binario es distinto de cero
     
-    watershed1= watershed(img_sobel)
-    watershed2 = watershed(minimos)
+    watershed1= watershed(img_sobel) #Aplicamos el algoritmo de Watershed sobre imagen de Sobel 
+    watershed2 = watershed(minimos) #Aplicamos el algoritmo de Watershed con los mínimos regionales
     
     return watershed1, watershed2
-
-
-
-
-
 
 
