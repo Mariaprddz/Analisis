@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Nov 15 11:35:21 2020
-
 @author: nakag
 """
 
@@ -26,7 +25,6 @@ from skimage.segmentation import watershed
 
 def RegionGrowingP2(img, umbral_inf, umbral_sup):
     '''
-
     Parameters
     ----------
     img : Array of float32
@@ -35,12 +33,10 @@ def RegionGrowingP2(img, umbral_inf, umbral_sup):
         Umbral por debajo del nivel de gris del punto seleccionado en seed.
     umbral_sup : float
         Umbral por encima del nivel de gris del punto seleccionado en seed.
-
     Returns
     -------
     region : Array of float64
         ROI de la imagen deseada.
-
     '''
     plt.figure()
     plt.imshow(img, cmap='gray') #Hacemos la representación la imagen para poder decidir donde posicionar la semilla
@@ -115,29 +111,27 @@ def RegionGrowingP2(img, umbral_inf, umbral_sup):
 def WatershedExerciseP2(img, numberofseeds):
     '''
     
-
     Parameters
     ----------
     img : Array of float32
         Imagen original.
     numberofseeds : int
         Número de semillas que vamos a utilizar.
-
     Returns
     -------
     watershed1 : Array of int32
         Máscara de regiones tras algoritmo Watershed con img_sobel como input.
     watershed2 : Array of int32
         Máscara de regiones tras algoritmo Watershed con minimos como input..
-
     '''
     white_dots= np.zeros(shape=(img.shape[0],img.shape[1])) #Matriz de ceros a la que vamos a añadir los mínimos locales introducidos con .ginput()
     img_sobel=filters.sobel(img)  #Transformamos la imagen original a gradiente mediante el algoritmo de Sobel
 
-    
+    plt.figure()
     plt.title('Semillas')
     plt.imshow(img, cmap='gray') #Hacemos la representación la imagen para poder decidir donde posicionar las semillas
     click_markers = plt.ginput(n=numberofseeds) #Utilizamos la funcion .ginput() para posicionamiento de samillas, nótese que el número de estas lo introducimos como parámetro de la función
+    plt.close()
     clicks = [(sub[1], sub[0]) for sub in click_markers] #cambiamos el orden de las tuplas obtenidas en .ginput() para poder usarlas como coordenadas.
     markers = np.array(clicks,dtype = int) #transformamos la lista de tuplas a un array y pasamos de elementos float a int
     
@@ -145,8 +139,7 @@ def WatershedExerciseP2(img, numberofseeds):
 
     
     white_dots[markers[:,0], markers[:,1]] = 1 #Sustituímos los puntos que hemos almacenado en la variable markers por 1s en la matriz de ceros creada al inicio de nuestra función
-    plt.title('Máscara binaria con las semillas')
-    plt.imshow(white_dots, cmap=plt.cm.gray)    
+   
     
     minimos = imimposemin(img_sobel, white_dots) #modifica la imagen de la máscara en escala de grises utilizando la reconstrucción morfológica por lo que sólo tiene mínimo regional donde la imagen de marcador binario es distinto de cero
     
@@ -155,4 +148,144 @@ def WatershedExerciseP2(img, numberofseeds):
     
     return watershed1, watershed2
 
+
+def anisodiff(img,niter=1,kappa=50,gamma=0.1,step=(1.,1.),option=1,plot_flag=False):
+        """
+        Anisotropic diffusion.
+ 
+        Usage:
+        imgout = anisodiff(im, niter, kappa, gamma, option)
+ 
+        Arguments:
+                img    - input image
+                niter  - number of iterations
+                kappa  - conduction coefficient 20-100 ?
+                gamma  - max value of .25 for stability
+                step   - tuple, the distance between adjacent pixels in (y,x)
+                option - 1 Perona Malik diffusion equation No 1
+                         2 Perona Malik diffusion equation No 2
+                plot_flag - if True, the image will be plotted
+ 
+        Returns:
+                imgout   - diffused image.
+ 
+        kappa controls conduction as a function of gradient.  If kappa is low
+        small intensity gradients are able to block conduction and hence diffusion
+        across step edges.  A large value reduces the influence of intensity
+        gradients on conduction.
+ 
+        gamma controls speed of diffusion (you usually want it at a maximum of
+        0.25)
+ 
+        step is used to scale the gradients in case the spacing between adjacent
+        pixels differs in the x and y axes
+ 
+        Diffusion equation 1 favours high contrast edges over low contrast ones.
+        Diffusion equation 2 favours wide regions over smaller ones.
+ 
+        Reference:
+        P. Perona and J. Malik.
+        Scale-space and edge detection using ansotropic diffusion.
+        IEEE Transactions on Pattern Analysis and Machine Intelligence,
+        12(7):629-639, July 1990.
+ 
+        Original MATLAB code by Peter Kovesi  
+        School of Computer Science & Software Engineering
+        The University of Western Australia
+        pk @ csse uwa edu au
+        <http://www.csse.uwa.edu.au>
+ 
+        Translated to Python and optimised by Alistair Muldal
+        Department of Pharmacology
+        University of Oxford
+        <alistair.muldal@pharm.ox.ac.uk>
+ 
+        June 2000  original version.      
+        March 2002 corrected diffusion eqn No 2.
+        July 2012 translated to Python
+        """
+ 
+        # initialize output array
+        img = img.astype('float64')
+        imgout = img.copy()
+ 
+        # initialize some internal variables
+        deltaS = np.zeros_like(imgout)
+        deltaE = deltaS.copy()
+        NS = deltaS.copy()
+        EW = deltaS.copy()
+        gS = np.ones_like(imgout)
+        gE = gS.copy()    
+ 
+        for ii in range(niter):
+ 
+                # calculate the diffs
+                deltaS[:-1,: ] = np.diff(imgout,axis=0)
+                deltaE[: ,:-1] = np.diff(imgout,axis=1)
+ 
+                # conduction gradients (only need to compute one per dim!)
+                if option == 1:
+                        gS = np.exp(-(deltaS/kappa)**2.)/step[0]
+                        gE = np.exp(-(deltaE/kappa)**2.)/step[1]
+                elif option == 2:
+                        gS = 1./(1.+(deltaS/kappa)**2.)/step[0]
+                        gE = 1./(1.+(deltaE/kappa)**2.)/step[1]
+ 
+                # update matrices
+                E = gE*deltaE
+                S = gS*deltaS
+ 
+                # subtract a copy that has been shifted 'North/West' by one
+                # pixel. don't as questions. just do it. trust me.
+                NS[:] = S
+                EW[:] = E
+                NS[1:,:] -= S[:-1,:]
+                EW[:,1:] -= E[:,:-1]
+ 
+                # update the image
+                imgout += gamma*(NS+EW)
+ 
+                               
+        if plot_flag:
+             # create the plot figure, if requested
+            plt.figure(figsize=(12, 5))
+            plt.subplot(121)
+            plt.imshow(img, cmap=plt.cm.gray)
+            plt.title('Original image'), plt.axis('off')
+            plt.subplot(122)
+            plt.imshow(imgout, cmap=plt.cm.gray)
+            plt.title('Filtered image (Anisotropic Diffusion)'), plt.axis('off')
+ 
+        return imgout
+
+def WatershedNoGinput(img, markers):
+    '''
+    
+    Parameters
+    ----------
+    img : Array of float32
+        Imagen original.
+    numberofseeds : int
+        Número de semillas que vamos a utilizar.
+    Returns
+    -------
+    watershed1 : Array of int32
+        Máscara de regiones tras algoritmo Watershed con img_sobel como input.
+    watershed2 : Array of int32
+        Máscara de regiones tras algoritmo Watershed con minimos como input..
+    '''
+    white_dots= np.zeros(shape=(img.shape[0],img.shape[1])) #Matriz de ceros a la que vamos a añadir los mínimos locales introducidos con .ginput()
+    img_sobel=filters.sobel(img)  #Transformamos la imagen original a gradiente mediante el algoritmo de Sobel
+
+
+    
+    white_dots[markers[:,0], markers[:,1]] = 1 #Sustituímos los puntos que hemos almacenado en la variable markers por 1s en la matriz de ceros creada al inicio de nuestra función
+ 
+    
+    minimos = imimposemin(img_sobel, white_dots) #modifica la imagen de la máscara en escala de grises utilizando la reconstrucción morfológica por lo que sólo tiene mínimo regional donde la imagen de marcador binario es distinto de cero
+    
+    watershed1= watershed(img_sobel) #Aplicamos el algoritmo de Watershed sobre imagen de Sobel 
+    watershed2 = watershed(minimos) #Aplicamos el algoritmo de Watershed con los mínimos regionales
+    
+    return watershed1, watershed2
 
