@@ -42,9 +42,10 @@ def RegionGrowingP2(img, umbral_inf, umbral_sup):
         ROI de la imagen deseada.
 
     '''
-
+    plt.figure()
     plt.imshow(img, cmap='gray') #Hacemos la representación la imagen para poder decidir donde posicionar la semilla
     click_markers = plt.ginput(n=1)  #Utilizamos la funcion .ginput() para posicionamiento de semilla
+    plt.close()
     click_markers = list(click_markers[0]) #Transformamos a una lista
 
          
